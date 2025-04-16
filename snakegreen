@@ -164,3 +164,78 @@ document.addEventListener("keydown", changeDirection);
 		</script>
 	</body>
 </html>
+
+import pygame
+import sys
+
+# Inicializar pygame
+pygame.init()
+
+# Tamaño de la pantalla
+screen_width = 800
+screen_height = 400
+screen = pygame.display.set_mode((screen_width, screen_height))
+
+# Colores
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+
+# FPS
+clock = pygame.time.Clock()
+FPS = 60
+
+# Variables del jugador
+player_width = 50
+player_height = 50
+player_x = 50
+player_y = screen_height - player_height - 50
+player_velocity = 5
+is_jumping = False
+jump_count = 10
+
+# Función para dibujar al jugador
+def draw_player(x, y):
+    pygame.draw.rect(screen, BLUE, (x, y, player_width, player_height))
+
+# Bucle principal del juego
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # Movimiento del jugador
+    keys = pygame.key.get_pressed()
+
+    # Mover al jugador a la derecha
+    if keys[pygame.K_RIGHT]:
+        player_x += player_velocity
+    if keys[pygame.K_LEFT]:
+        player_x -= player_velocity
+
+    # Manejo del salto
+    if not is_jumping:
+        if keys[pygame.K_SPACE]:
+            is_jumping = True
+    else:
+        if jump_count >= -10:
+            neg = 1
+            if jump_count < 0:
+                neg = -1
+            player_y -= (jump_count ** 2) * 0.5 * neg
+            jump_count -= 1
+        else:
+            is_jumping = False
+            jump_count = 10
+
+    # Rellenar la pantalla con color blanco
+    screen.fill(WHITE)
+
+    # Dibujar al jugador
+    draw_player(player_x, player_y)
+
+    # Actualizar la pantalla
+    pygame.display.update()
+
+    # Limitar FPS
+    clock.tick(FPS)
